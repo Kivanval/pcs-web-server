@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/pcs
+    username: postgres
+    password: postgres
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+jwt:
+  secret: B7B52D018521488FE2D61661B53E5C432E5076AD68FE67DEBCFEE213EE6ED848
+  issuer: springdevkpi
