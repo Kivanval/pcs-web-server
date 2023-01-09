@@ -1,17 +1,14 @@
 package com.example.pcswebserver.data;
 
-import com.example.pcswebserver.domain.Permission;
+import com.example.pcswebserver.domain.FilePermission;
+import com.example.pcswebserver.domain.FilePermissionKey;
+import com.example.pcswebserver.domain.User;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
 public interface PermissionRepository
-        extends CrudRepository<Permission, Long> {
-    Optional<Permission> findByName(String name);
+        extends CrudRepository<FilePermission, FilePermissionKey> {
+    Optional<FilePermission> findByUser(User user);
 
-    void deleteByName(String name);
-
-    boolean existsByName(String name);
 }

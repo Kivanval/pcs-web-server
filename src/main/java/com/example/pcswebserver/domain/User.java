@@ -6,9 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "USERS")
@@ -29,10 +27,9 @@ public class User {
     @Column(nullable = false)
     LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToMany
-    @Setter(AccessLevel.PRIVATE)
+    @ManyToOne(optional = false)
     @ToString.Exclude
-    Set<Permission> permissions = new LinkedHashSet<>();
+    Role role;
 
     @Override
     public boolean equals(Object o) {
