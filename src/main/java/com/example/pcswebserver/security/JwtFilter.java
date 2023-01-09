@@ -23,7 +23,6 @@ public class JwtFilter extends GenericFilterBean {
 
     private final JwtProvider jwtProvider;
 
-
     private final UserDetailsService userDetailsService;
 
     @Autowired

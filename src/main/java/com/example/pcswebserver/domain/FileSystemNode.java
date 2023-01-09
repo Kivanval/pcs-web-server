@@ -27,7 +27,6 @@ public class FileSystemNode {
     @Column(nullable = false, unique = true)
     String name;
 
-
     @ManyToOne(optional = false)
     FileSystemNode parent;
 
