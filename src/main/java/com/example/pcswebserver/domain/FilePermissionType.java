@@ -4,20 +4,18 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Table(name = "PERMISSIONS")
+@Table(name = "FILE_PERMISSION_TYPES")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Permission {
+public class FilePermissionType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
@@ -26,25 +24,16 @@ public class Permission {
     @Column(nullable = false, unique = true)
     String name;
 
-    @ManyToMany(mappedBy = "permissions")
-    @Setter(AccessLevel.PRIVATE)
-    @ToString.Exclude
-    Set<User> users = new LinkedHashSet<>();
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Permission permission = (Permission) o;
-        return id != null && Objects.equals(id, permission.id);
+        FilePermissionType that = (FilePermissionType) o;
+        return id != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
         return getClass().hashCode();
-    }
-
-    public SimpleGrantedAuthority asGrantedAuthority() {
-        return new SimpleGrantedAuthority(name);
     }
 }

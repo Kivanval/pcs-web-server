@@ -1,17 +1,16 @@
 package com.example.pcswebserver.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.pcswebserver.data.PermissionRepository;
-
+import com.example.pcswebserver.data.RoleRepository;
 import com.example.pcswebserver.data.UserRepository;
+import com.example.pcswebserver.domain.Role;
 import com.example.pcswebserver.domain.User;
+import com.example.pcswebserver.exception.RoleNotFoundException;
 import com.example.pcswebserver.exception.UserAlreadyExistsException;
 import com.example.pcswebserver.exception.UserNotFoundException;
 import com.example.pcswebserver.security.JwtProvider;
-import com.example.pcswebserver.web.dao.PasswordUpdateInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,37 +20,21 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class UserService {
-
-
     private final UserRepository userRepository;
-
-    private final PermissionRepository permissionRepository;
-
+    private final RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
-
     private JwtProvider jwtProvider;
 
     @Autowired
-    public UserService(UserRepository userRepository, PermissionRepository permissionRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
-        this.permissionRepository = permissionRepository;
-    }
-
-    @Autowired
-    public void setJwtProvider(JwtProvider jwtProvider) {
-        this.jwtProvider = jwtProvider;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     @Transactional
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
-
 
     @Transactional
     public void deleteByUsername(String username) {
@@ -68,6 +51,9 @@ public class UserService {
         var user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
+        var userRole = roleRepository.findByName(Role.USER)
+                .orElseThrow(() -> new RoleNotFoundException(Role.USER));
+        user.setRole(userRole);
         userRepository.save(user);
     }
 
@@ -100,5 +86,16 @@ public class UserService {
         return findByCredentials(username, password)
                 .orElseThrow(() -> new UserNotFoundException(username));
     }
+
+    @Autowired
+    public void setJwtProvider(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
 
 }
