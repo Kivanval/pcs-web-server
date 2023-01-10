@@ -18,13 +18,7 @@ import static com.example.pcswebserver.web.AuthController.AUTH_PREFIX;
 public class AuthController {
 
     public static final String AUTH_PREFIX = "/auth";
-
-    private final UserService userService;
-
-    @Autowired
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
     @PostMapping("/sign-up")
     @ResponseStatus(HttpStatus.OK)
@@ -38,5 +32,10 @@ public class AuthController {
         return userService.signIn(credentials.getUsername(), credentials.getPassword())
                 .map(JwtTokenMapper.INSTANCE::toPayload)
                 .orElseThrow(() -> new AccessDeniedException("Access denied"));
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

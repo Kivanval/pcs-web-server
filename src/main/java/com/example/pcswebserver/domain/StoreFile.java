@@ -26,6 +26,12 @@ public class StoreFile {
     @Column(nullable = false)
     String name;
 
+    @Column(nullable = false)
+    String contentType;
+
+    @Column(nullable = false)
+    Long size;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "creator_id")
     User creator;

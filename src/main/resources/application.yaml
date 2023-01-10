@@ -14,6 +14,8 @@ spring:
       enabled: true
       max-file-size: 256MB
       max-request-size: 272MB
+store:
+  path: "store/files/"
 jwt:
   secret: B7B52D018521488FE2D61661B53E5C432E5076AD68FE67DEBCFEE213EE6ED848
-  issuer: springdevkpi
+  issuer: pcs

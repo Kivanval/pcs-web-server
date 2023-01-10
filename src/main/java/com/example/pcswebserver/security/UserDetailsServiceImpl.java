@@ -4,6 +4,8 @@ import com.example.pcswebserver.data.StoreDirectoryPermissionRepository;
 import com.example.pcswebserver.data.StoreFilePermissionRepository;
 import com.example.pcswebserver.data.UserRepository;
 import com.example.pcswebserver.domain.StoreFilePermission;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,22 +17,14 @@ import java.util.stream.Stream;
 
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    UserRepository userRepository;
 
-    private final StoreFilePermissionRepository storeFilePermissionRepository;
+    StoreFilePermissionRepository storeFilePermissionRepository;
 
-    private final StoreDirectoryPermissionRepository storeDirectoryPermissionRepository;
-
-    @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository,
-                                  StoreFilePermissionRepository storeFilePermissionRepository,
-                                  StoreDirectoryPermissionRepository storeDirectoryPermissionRepository) {
-        this.userRepository = userRepository;
-        this.storeFilePermissionRepository = storeFilePermissionRepository;
-        this.storeDirectoryPermissionRepository = storeDirectoryPermissionRepository;
-    }
+    StoreDirectoryPermissionRepository storeDirectoryPermissionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -46,5 +40,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         ).collect(Collectors.toSet());
         permissions.addAll(user.getRole().asAuthorities());
         return new UserDetailsImpl(user, permissions);
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setStoreFilePermissionRepository(StoreFilePermissionRepository storeFilePermissionRepository) {
+        this.storeFilePermissionRepository = storeFilePermissionRepository;
+    }
+
+    @Autowired
+    public void setStoreDirectoryPermissionRepository(StoreDirectoryPermissionRepository storeDirectoryPermissionRepository) {
+        this.storeDirectoryPermissionRepository = storeDirectoryPermissionRepository;
     }
 }

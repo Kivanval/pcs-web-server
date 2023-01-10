@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,19 +19,14 @@ import java.util.Optional;
 import static org.springframework.util.StringUtils.hasText;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtFilter extends OncePerRequestFilter {
 
     public static final String AUTHORIZATION = "Authorization";
 
-    private final JwtProvider jwtProvider;
+    JwtProvider jwtProvider;
 
-    private final UserDetailsService userDetailsService;
-
-    @Autowired
-    public JwtFilter(JwtProvider jwtProvider, UserDetailsServiceImpl userDetailsService) {
-        this.jwtProvider = jwtProvider;
-        this.userDetailsService = userDetailsService;
-    }
+    UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -57,5 +54,15 @@ public class JwtFilter extends OncePerRequestFilter {
             return Optional.of(bearer.substring(7));
         }
         return Optional.empty();
+    }
+
+    @Autowired
+    public void setJwtProvider(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
+    }
+
+    @Autowired
+    public void setUserDetailsService(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 }
