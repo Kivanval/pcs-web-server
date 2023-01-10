@@ -11,16 +11,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.example.pcswebserver.web.AuthController.AUTH_PREFIX;
+import static com.example.pcswebserver.web.StoreController.STORE_PREFIX;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private final JwtFilter jwtFilter;
+    private JwtFilter jwtFilter;
 
     @Autowired
-    public WebSecurityConfig(JwtFilter jwtFilter) {
+    public void setJwtFilter(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
+
 
     @Bean
     public PasswordEncoder getEncoder() {
@@ -28,15 +32,16 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain web(HttpSecurity http) throws Exception {
         return http
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/**")
-                .permitAll()
+                .requestMatchers(AUTH_PREFIX + "/**").permitAll()
+                .requestMatchers(STORE_PREFIX + "/**").access(new StoreManager())
+                .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
