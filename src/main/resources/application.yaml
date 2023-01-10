@@ -9,7 +9,11 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
-
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 256MB
+      max-request-size: 272MB
 jwt:
   secret: B7B52D018521488FE2D61661B53E5C432E5076AD68FE67DEBCFEE213EE6ED848
   issuer: springdevkpi

@@ -6,42 +6,42 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Entity
-@Table(name = "FILE_PERMISSIONS")
+@Table(name = "DIR_PERMS")
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FilePermission {
-
-    @EmbeddedId
-    FilePermissionKey id;
-
+public class StoreDirectoryPermission {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(nullable = false)
+    UUID id;
     @ManyToOne(optional = false)
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     User user;
-
     @ManyToOne(optional = false)
-    @MapsId("fileSystemNodeId")
-    @JoinColumn(name = "file_system_node_id")
-    FileSystemNode fileSystemNode;
-
-    @ManyToOne(optional = false)
-    @MapsId("filePermissionTypeId")
-    @JoinColumn(name = "file_permission_type_id")
-    FilePermissionType filePermissionType;
+    @MapsId("directoryId")
+    @JoinColumn(name = "directory_id")
+    StoreDirectory directory;
+    @Enumerated(EnumType.STRING)
+    StorePermissionType permissionType;
+    @Column(nullable = false)
+    LocalDateTime grantedAt = LocalDateTime.now();
 
     public Set<SimpleGrantedAuthority> asAuthorities() {
         return Stream
-                .concat(Stream.of(fileSystemNode), Stream.of(fileSystemNode.getAllChildren()))
-                .map(node -> "%s_%s" .formatted(filePermissionType.getName(), fileSystemNode.getFullName()))
+                .concat(Stream.of(directory), Stream.of(directory.getAllChildren()))
+                .map(dir -> permissionType.toString() + "_" + directory.getId())
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }
@@ -50,12 +50,12 @@ public class FilePermission {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        FilePermission that = (FilePermission) o;
+        StoreDirectoryPermission that = (StoreDirectoryPermission) o;
         return id != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return getClass().hashCode();
     }
 }

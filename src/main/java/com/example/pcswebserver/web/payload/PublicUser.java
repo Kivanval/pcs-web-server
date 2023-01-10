@@ -1,4 +1,4 @@
-package com.example.pcswebserver.web.dao;
+package com.example.pcswebserver.web.payload;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -6,16 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class JwtToken {
-    String token;
-
-    String type;
-
-    String algorithm;
-
-    String expiresAt;
+public class PublicUser implements Serializable {
+    String username;
+    String createdAt;
 }

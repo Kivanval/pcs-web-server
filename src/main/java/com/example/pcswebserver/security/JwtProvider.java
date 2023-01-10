@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -32,15 +33,15 @@ public class JwtProvider {
                 .sign(Algorithm.HMAC256(jwtSecret));
     }
 
-    public DecodedJWT toDecodedJWT(String token) {
+    public Optional<DecodedJWT> toDecodedJWT(String token) {
         try {
-            return JWT.require(Algorithm.HMAC256(jwtSecret))
+            return Optional.of(JWT.require(Algorithm.HMAC256(jwtSecret))
                     .withIssuer(jwtIssuer)
                     .build()
-                    .verify(token);
+                    .verify(token));
         } catch (JWTVerificationException exception) {
             log.warn("Invalid protocol for token {}", token);
-            return null;
+            return Optional.empty();
         }
     }
 

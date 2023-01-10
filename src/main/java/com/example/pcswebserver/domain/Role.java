@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,23 +21,28 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Role {
-    public static final String ROLE_PREFIX = "ROLE_";
     public static final String ADMIN = "ADMIN";
     public static final String USER = "USER";
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     Long id;
     @Column(nullable = false, unique = true)
     String name;
-    @OneToMany(mappedBy = "role")
-    @Setter(AccessLevel.PRIVATE)
+    @Column(nullable = false)
+    LocalDateTime createdAt = LocalDateTime.now();
     @ToString.Exclude
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "role")
     Set<User> users = new HashSet<>();
     @ManyToOne
     Role parent;
-    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
     @ToString.Exclude
+    @Setter(AccessLevel.PRIVATE)
+
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<Role> children = new HashSet<>();
 
     @Override
@@ -68,7 +74,7 @@ public class Role {
     public Set<SimpleGrantedAuthority> asAuthorities() {
         return Stream
                 .concat(Stream.of(this), Stream.of(getAllChildren()))
-                .map(node -> ROLE_PREFIX + name)
+                .map(node -> "ROLE_" + name)
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }

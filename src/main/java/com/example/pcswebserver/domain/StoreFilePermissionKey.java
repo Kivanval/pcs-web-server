@@ -8,6 +8,7 @@ import org.hibernate.Hibernate;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Embeddable
 @Getter
@@ -15,29 +16,23 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FilePermissionKey implements Serializable {
-
+public class StoreFilePermissionKey implements Serializable {
     @Column(name = "user_id")
-    Long userId;
-
-    @Column(name = "file_system_node_id")
-    Long fileSystemNodeId;
-
-    @Column(name = "file_permission_type_id")
-    Long filePermissionTypeId;
+    UUID userId;
+    @Column(name = "file_id")
+    UUID fileId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        FilePermissionKey that = (FilePermissionKey) o;
+        StoreFilePermissionKey that = (StoreFilePermissionKey) o;
         return userId != null && Objects.equals(userId, that.userId)
-                && fileSystemNodeId != null && Objects.equals(fileSystemNodeId, that.fileSystemNodeId)
-                && filePermissionTypeId != null && Objects.equals(filePermissionTypeId, that.filePermissionTypeId);
+                && fileId != null && Objects.equals(fileId, that.fileId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, fileSystemNodeId, filePermissionTypeId);
+        return Objects.hash(userId, fileId);
     }
 }

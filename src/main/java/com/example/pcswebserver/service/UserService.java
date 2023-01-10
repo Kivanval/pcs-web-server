@@ -44,15 +44,13 @@ public class UserService {
 
     @Transactional
     public void signUp(String username, String password) {
-        if (userRepository.existsByUsername(username)) {
-            log.error("User with username {} already exists", username);
-            throw new UserAlreadyExistsException(password);
-        }
+        if (userRepository.existsByUsername(username))
+            throw new UserAlreadyExistsException("User with username %s already exists" .formatted(username));
         var user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         var userRole = roleRepository.findByName(Role.USER)
-                .orElseThrow(() -> new RoleNotFoundException(Role.USER));
+                .orElseThrow(() -> new RoleNotFoundException("User with username %s already exists" .formatted(Role.USER)));
         user.setRole(userRole);
         userRepository.save(user);
     }
@@ -66,7 +64,7 @@ public class UserService {
     }
 
     @Transactional
-    public DecodedJWT signIn(String username, String password) {
+    public Optional<DecodedJWT> signIn(String username, String password) {
         getByCredentials(username, password);
         return jwtProvider.toDecodedJWT(jwtProvider.generateToken(username));
     }
@@ -84,7 +82,7 @@ public class UserService {
 
     private User getByCredentials(String username, String password) {
         return findByCredentials(username, password)
-                .orElseThrow(() -> new UserNotFoundException(username));
+                .orElseThrow(() -> new UserNotFoundException("User with username %s not found" .formatted(username)));
     }
 
     @Autowired

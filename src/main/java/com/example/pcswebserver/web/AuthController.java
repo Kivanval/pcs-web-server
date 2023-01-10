@@ -2,18 +2,22 @@ package com.example.pcswebserver.web;
 
 
 import com.example.pcswebserver.service.UserService;
-import com.example.pcswebserver.web.dao.Credentials;
-import com.example.pcswebserver.web.dao.JwtToken;
-import com.example.pcswebserver.web.dao.JwtTokenMapper;
+import com.example.pcswebserver.web.payload.Credentials;
+import com.example.pcswebserver.web.payload.JwtToken;
+import com.example.pcswebserver.web.payload.JwtTokenMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
+import static com.example.pcswebserver.web.AuthController.AUTH_PREFIX;
+
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(AUTH_PREFIX)
 public class AuthController {
+
+    public static final String AUTH_PREFIX = "/auth";
 
     private final UserService userService;
 
@@ -29,8 +33,10 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<JwtToken> signIn(@RequestBody @Valid Credentials credentials) {
-        var token = userService.signIn(credentials.getUsername(), credentials.getPassword());
-        return ResponseEntity.ok(JwtTokenMapper.INSTANCE.toDto(token));
+    @ResponseStatus(HttpStatus.OK)
+    public JwtToken signIn(@RequestBody @Valid Credentials credentials) {
+        return userService.signIn(credentials.getUsername(), credentials.getPassword())
+                .map(JwtTokenMapper.INSTANCE::toPayload)
+                .orElseThrow(() -> new AccessDeniedException("Access denied"));
     }
 }

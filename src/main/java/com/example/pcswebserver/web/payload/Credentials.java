@@ -1,5 +1,4 @@
-package com.example.pcswebserver.web.dao;
-
+package com.example.pcswebserver.web.payload;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -12,13 +11,12 @@ import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PasswordUpdateInfo implements Serializable {
+public class Credentials implements Serializable {
     @NotNull @Size(min = 5, max = 255) @Pattern(regexp = "^\\S+$") String username;
-    @NotNull @Size(min = 8, max = 255) @Pattern(regexp = "^\\S+$") String oldPassword;
-
-    @NotNull @Size(min = 8, max = 255) @Pattern(regexp = "^\\S+$") String newPassword;
+    @NotNull @Size(min = 8, max = 255) @Pattern(regexp = "^\\S+$") String password;
 }

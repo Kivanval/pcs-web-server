@@ -1,4 +1,4 @@
-package com.example.pcswebserver.web.dao;
+package com.example.pcswebserver.web.payload;
 
 import com.example.pcswebserver.domain.User;
 import org.mapstruct.Mapper;
@@ -10,8 +10,8 @@ public interface PublicUserMapper {
     PublicUserMapper INSTANCE = Mappers.getMapper(PublicUserMapper.class);
 
     @Mapping(target = "createdAt", dateFormat = "dd-MM-yyyy HH:mm:ss")
-    User fromDto(PublicUser dto);
+    User fromPayload(PublicUser dto);
 
     @Mapping(target = "createdAt", dateFormat = "dd-MM-yyyy HH:mm:ss")
-    PublicUser toDto(User user);
+    PublicUser toPayload(User user);
 }
