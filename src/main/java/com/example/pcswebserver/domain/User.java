@@ -36,7 +36,7 @@ public class User {
     @ToString.Exclude
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
-    Set<StoreDirectory> directories = new HashSet<>();
+    Set<StoreDir> directories = new HashSet<>();
 
     @ToString.Exclude
     @Setter(AccessLevel.PRIVATE)

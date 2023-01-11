@@ -9,11 +9,10 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 import static com.example.pcswebserver.domain.StorePermissionType.MODIFY;
 import static com.example.pcswebserver.domain.StorePermissionType.READ;
-import static com.example.pcswebserver.web.StoreController.STORE_PREFIX;
+import static com.example.pcswebserver.web.WebConstants.STORE;
 
 public class StoreManager implements AuthorizationManager<RequestAuthorizationContext> {
 
@@ -22,34 +21,41 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
         var authentication = authenticationSupplier.get();
         var requestURI = context.getRequest().getRequestURI();
 
-        if (requestURI.matches(STORE_PREFIX + "/[^/]+")) return new AuthorizationDecision(true);
+        if (requestURI.matches(STORE + "/[^/]+/[^/]+")) return new AuthorizationDecision(true);
 
         var srcUrl = requestURI.substring(requestURI.lastIndexOf('/') + 1);
         return new AuthorizationDecision(
                 switch (RequestMethod.valueOf(context.getRequest().getMethod())) {
-                    case GET -> mustBePermission(srcUrl, READ, authentication);
-                    case POST, PUT, PATCH, DELETE -> mustBePermission(srcUrl, MODIFY, authentication);
+                    case GET ->
+                            isAdmin(authentication) || hasAccessToSrc(srcUrl, READ, authentication);
+                    case POST, PUT, PATCH, DELETE ->
+                            isAdmin(authentication) || hasAccessToSrc(srcUrl, MODIFY, authentication);
                     default -> false;
                 });
     }
 
-    private boolean mustBePermission(String srcUrl, StorePermissionType permissionType, Authentication authentication) {
+    private boolean hasAccessToSrc(String srcUrl, StorePermissionType permissionType, Authentication authentication) {
         return authentication
                 .getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
+                .filter(auth -> !auth.startsWith("ROLE") || auth.endsWith("ADMIN"))
                 .anyMatch(auth -> {
-                    var matcher = Pattern.compile("([^_]+)").matcher(auth);
-                    if (matcher.groupCount() != 2) return false;
-                    var permissionAuth = matcher.group(0);
-                    var srcAuth = matcher.group(1);
-                    if (!srcUrl.equals(srcAuth)) return false;
-                    if (permissionAuth.equals(permissionType.toString())) return true;
-                    return permissionType
+                    if (auth.endsWith("ADMIN")) return true;
+                    if (auth.startsWith(permissionType.toString()) && auth.endsWith(srcUrl)) return true;
+                    return StorePermissionType.valueOf(auth.substring(0, auth.indexOf('_')))
                             .getChildren()
                             .stream()
-                            .map(StorePermissionType::toString)
-                            .anyMatch(permission -> permission.equals(permissionAuth));
+                            .anyMatch(authPermissionType -> authPermissionType == permissionType
+                                    && auth.endsWith(srcUrl));
                 });
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        return authentication
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(auth -> auth.startsWith("ROLE") && auth.endsWith("ADMIN"));
     }
 }

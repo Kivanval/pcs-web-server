@@ -7,7 +7,6 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface JwtTokenMapper {
-
     JwtTokenMapper INSTANCE = Mappers.getMapper(JwtTokenMapper.class);
 
     @Mapping(target = "expiresAt", dateFormat = "dd-MM-yyyy HH:mm:ss")

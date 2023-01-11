@@ -24,6 +24,8 @@
         <junit-platform-surefire-provider.version>1.2.0-M1</junit-platform-surefire-provider.version>
         <junit-jupiter-engine.version>5.2.0-M1</junit-jupiter-engine.version>
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+        <guava.version>31.1-jre</guava.version>
+        <commons-io.version>2.11.0</commons-io.version>
     </properties>
     <dependencies>
         <dependency>
@@ -55,6 +57,11 @@
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>${java-jwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

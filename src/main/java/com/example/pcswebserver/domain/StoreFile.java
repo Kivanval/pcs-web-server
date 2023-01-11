@@ -27,10 +27,7 @@ public class StoreFile {
     String name;
 
     @Column(nullable = false)
-    String contentType;
-
-    @Column(nullable = false)
-    Long size;
+    long size = 0;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "creator_id")
@@ -38,7 +35,7 @@ public class StoreFile {
 
     @ManyToOne
     @JoinColumn(name = "dir_id")
-    StoreDirectory directory;
+    StoreDir dir;
 
     @Column(nullable = false)
     LocalDateTime createdAt = LocalDateTime.now();

@@ -19,9 +19,9 @@ import java.util.stream.Stream;
 @ToString
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StoreDirectoryPermission {
+public class StoreDirPermission {
     @EmbeddedId
-    StoreDirectoryPermissionKey id = new StoreDirectoryPermissionKey();
+    StoreDirPermissionKey id = new StoreDirPermissionKey();
 
     @ManyToOne(optional = false)
     @MapsId("userId")
@@ -29,8 +29,8 @@ public class StoreDirectoryPermission {
     User user;
     @ManyToOne(optional = false)
     @MapsId("dirId")
-    @JoinColumn(name = "directory_id")
-    StoreDirectory directory;
+    @JoinColumn(name = "dir_id")
+    StoreDir dir;
     @Enumerated(EnumType.STRING)
     StorePermissionType permissionType;
     @Column(nullable = false)
@@ -38,8 +38,8 @@ public class StoreDirectoryPermission {
 
     public Set<SimpleGrantedAuthority> asAuthorities() {
         return Stream
-                .concat(Stream.of(directory), Stream.of(directory.getAllChildren()))
-                .map(dir -> permissionType.toString() + "_" + directory.getId())
+                .concat(Stream.of(dir), dir.getAllChildren().stream())
+                .map(storeDir -> permissionType.toString() + "_" + storeDir.getId())
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }
@@ -48,7 +48,7 @@ public class StoreDirectoryPermission {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        StoreDirectoryPermission that = (StoreDirectoryPermission) o;
+        StoreDirPermission that = (StoreDirPermission) o;
         return id != null && Objects.equals(id, that.id);
     }
 

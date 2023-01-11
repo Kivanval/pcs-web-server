@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({UserNotFoundException.class, RoleNotFoundException.class, StoreDirectoryNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, RoleNotFoundException.class, StoreDirNotFoundException.class})
     public ResponseEntity<ExceptionDetails> handleNotFound(RuntimeException exception, WebRequest request) {
         return handleGeneric(exception, request, HttpStatus.NOT_FOUND);
     }

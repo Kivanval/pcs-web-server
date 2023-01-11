@@ -1,6 +1,6 @@
 package com.example.pcswebserver.security;
 
-import com.example.pcswebserver.data.StoreDirectoryPermissionRepository;
+import com.example.pcswebserver.data.StoreDirPermissionRepository;
 import com.example.pcswebserver.data.StoreFilePermissionRepository;
 import com.example.pcswebserver.data.UserRepository;
 import com.example.pcswebserver.domain.StoreFilePermission;
@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     StoreFilePermissionRepository storeFilePermissionRepository;
 
-    StoreDirectoryPermissionRepository storeDirectoryPermissionRepository;
+    StoreDirPermissionRepository storeDirPermissionRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -34,7 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 storeFilePermissionRepository.findAllByUser(user)
                         .stream()
                         .map(StoreFilePermission::asAuthority),
-                storeDirectoryPermissionRepository.findAllByUser(user)
+                storeDirPermissionRepository.findAllByUser(user)
                         .stream()
                         .flatMap(dir -> dir.asAuthorities().stream())
         ).collect(Collectors.toSet());
@@ -53,7 +53,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Autowired
-    public void setStoreDirectoryPermissionRepository(StoreDirectoryPermissionRepository storeDirectoryPermissionRepository) {
-        this.storeDirectoryPermissionRepository = storeDirectoryPermissionRepository;
+    public void setStoreDirPermissionRepository(StoreDirPermissionRepository storeDirPermissionRepository) {
+        this.storeDirPermissionRepository = storeDirPermissionRepository;
     }
 }

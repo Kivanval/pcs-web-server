@@ -13,6 +13,5 @@ import lombok.experimental.FieldDefaults;
 public class ExceptionDetails {
     String message;
     String details;
-
     String timestamp;
 }

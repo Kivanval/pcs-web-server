@@ -11,22 +11,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.pcswebserver.web.AuthController.AUTH_PREFIX;
+import static com.example.pcswebserver.web.WebConstants.*;
 
 @RestController
-@RequestMapping(AUTH_PREFIX)
+@RequestMapping(AUTH)
 public class AuthController {
-
-    public static final String AUTH_PREFIX = "/auth";
     private UserService userService;
 
-    @PostMapping("/sign-up")
+    @PostMapping(SIGN_UP)
     @ResponseStatus(HttpStatus.OK)
     public void signUp(@RequestBody @Valid Credentials credentials) {
         userService.signUp(credentials.getUsername(), credentials.getPassword());
     }
 
-    @PostMapping("/sign-in")
+    @PostMapping(SIGN_IN)
     @ResponseStatus(HttpStatus.OK)
     public JwtToken signIn(@RequestBody @Valid Credentials credentials) {
         return userService.signIn(credentials.getUsername(), credentials.getPassword())

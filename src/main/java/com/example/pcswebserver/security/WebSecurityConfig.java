@@ -11,8 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.example.pcswebserver.web.AuthController.AUTH_PREFIX;
-import static com.example.pcswebserver.web.StoreController.STORE_PREFIX;
+import static com.example.pcswebserver.web.WebConstants.AUTH;
+import static com.example.pcswebserver.web.WebConstants.STORE;
 
 @Configuration
 @EnableWebSecurity
@@ -33,8 +33,8 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers(AUTH_PREFIX + "/**").permitAll()
-                .requestMatchers(STORE_PREFIX + "/**").access(new StoreManager())
+                .requestMatchers(AUTH + "/**").permitAll()
+                .requestMatchers(STORE + "/**").access(new StoreManager())
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

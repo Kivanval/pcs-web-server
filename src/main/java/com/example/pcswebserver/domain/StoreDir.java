@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @ToString
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StoreDirectory {
+public class StoreDir {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false)
@@ -31,19 +31,19 @@ public class StoreDirectory {
     User creator;
     @ManyToOne
     @JoinColumn(name = "parent_id")
-    StoreDirectory parent;
+    StoreDir parent;
     @Column(nullable = false)
     LocalDateTime createdAt = LocalDateTime.now();
     @ToString.Exclude
     @Setter(AccessLevel.PRIVATE)
-    @OneToMany(mappedBy = "directory")
+    @OneToMany(mappedBy = "dir")
     Set<StoreFile> files = new HashSet<>();
     @Setter(AccessLevel.PRIVATE)
     @ToString.Exclude
     @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    Set<StoreDirectory> children = new HashSet<>();
+    Set<StoreDir> children = new HashSet<>();
 
-    public Set<StoreDirectory> getAllChildren() {
+    public Set<StoreDir> getAllChildren() {
         return children.isEmpty() ? children : children.stream()
                 .flatMap(dir -> dir.getAllChildren().stream())
                 .collect(Collectors.toSet());
@@ -53,7 +53,7 @@ public class StoreDirectory {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        StoreDirectory that = (StoreDirectory) o;
+        StoreDir that = (StoreDir) o;
         return id != null && Objects.equals(id, that.id);
     }
 

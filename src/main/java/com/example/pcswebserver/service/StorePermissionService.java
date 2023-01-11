@@ -1,12 +1,8 @@
 package com.example.pcswebserver.service;
 
-import com.example.pcswebserver.data.StoreDirectoryPermissionRepository;
-import com.example.pcswebserver.data.StoreDirectoryRepository;
+import com.example.pcswebserver.data.StoreDirPermissionRepository;
 import com.example.pcswebserver.data.StoreFilePermissionRepository;
-import com.example.pcswebserver.domain.StoreDirectory;
-import com.example.pcswebserver.domain.StoreDirectoryPermission;
-import com.example.pcswebserver.domain.StorePermissionType;
-import com.example.pcswebserver.domain.User;
+import com.example.pcswebserver.domain.*;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +14,22 @@ public class StorePermissionService {
 
     StoreFilePermissionRepository filePermissionRepository;
 
-    StoreDirectoryPermissionRepository dirPermissionRepository;
+    StoreDirPermissionRepository dirPermissionRepository;
 
-    public StoreDirectoryPermission addDirPermission(StoreDirectory dir, User user, StorePermissionType permissionType) {
-        var dirPermission = new StoreDirectoryPermission();
-        dirPermission.setDirectory(dir);
+    public StoreDirPermission addPermission(StoreDir dir, User user, StorePermissionType permissionType) {
+        var dirPermission = new StoreDirPermission();
+        dirPermission.setDir(dir);
         dirPermission.setUser(user);
         dirPermission.setPermissionType(permissionType);
         return dirPermissionRepository.save(dirPermission);
+    }
+
+    public StoreFilePermission addPermission(StoreFile file, User user, StorePermissionType permissionType) {
+        var filePermission = new StoreFilePermission();
+        filePermission.setFile(file);
+        filePermission.setUser(user);
+        filePermission.setPermissionType(permissionType);
+        return filePermissionRepository.save(filePermission);
     }
 
     @Autowired
@@ -34,7 +38,7 @@ public class StorePermissionService {
     }
 
     @Autowired
-    public void setDiPermissionRepository(StoreDirectoryPermissionRepository dirPermissionRepository) {
+    public void setDiPermissionRepository(StoreDirPermissionRepository dirPermissionRepository) {
         this.dirPermissionRepository = dirPermissionRepository;
     }
 }

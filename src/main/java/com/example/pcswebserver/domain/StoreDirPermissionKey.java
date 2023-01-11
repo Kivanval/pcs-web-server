@@ -16,7 +16,7 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StoreDirectoryPermissionKey implements Serializable {
+public class StoreDirPermissionKey implements Serializable {
     @Column(name = "user_id")
     UUID userId;
     @Column(name = "dir_id")
@@ -26,7 +26,7 @@ public class StoreDirectoryPermissionKey implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        StoreDirectoryPermissionKey that = (StoreDirectoryPermissionKey) o;
+        StoreDirPermissionKey that = (StoreDirPermissionKey) o;
         return userId != null && Objects.equals(userId, that.userId)
                 && dirId != null && Objects.equals(dirId, that.dirId);
     }

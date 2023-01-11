@@ -1,7 +1,8 @@
 package com.example.pcswebserver.web;
 
-import com.example.pcswebserver.service.StoreService;
+import com.example.pcswebserver.service.StoreFileService;
 import com.example.pcswebserver.web.payload.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -10,26 +11,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
-import static com.example.pcswebserver.web.StoreController.STORE_PREFIX;
+import static com.example.pcswebserver.web.WebConstants.*;
 
 @RestController
-@RequestMapping(STORE_PREFIX)
-public class StoreController {
+@RequestMapping(STORE + FILE)
+public class StoreFileController {
+    private StoreFileService storeService;
 
-    public static final String STORE_PREFIX = "/store";
-    private StoreService storeService;
-
-    @PostMapping("/file")
+    @PostMapping(UPLOAD)
     @ResponseStatus(HttpStatus.OK)
     public UploadedFile upload(@RequestParam("file") MultipartFile file,
                                Authentication auth) {
         return UploadedFileMapper.INSTANCE
                 .toPayload(storeService
                         .store(file, storeService
-                                .create(file, auth.getName())));
+                                .save(file, auth.getName())));
     }
 
-    @PostMapping("/file/{dir-id}")
+    @PostMapping(UPLOAD + "/{dir-id}")
     @ResponseStatus(HttpStatus.OK)
     public UploadedFile upload(@RequestParam("file") MultipartFile file,
                                @PathVariable("dir-id") UUID dirId,
@@ -37,31 +36,32 @@ public class StoreController {
         return UploadedFileMapper.INSTANCE
                 .toPayload(storeService
                         .store(file, storeService
-                                .create(file, auth.getName(), dirId)));
+                                .save(file, auth.getName(), dirId)));
     }
 
-    @PostMapping("/dir")
+    @PostMapping(CREATE)
     @ResponseStatus(HttpStatus.OK)
-    public CreatedDirectory create(@RequestBody CreateDirectory dir,
-                                   Authentication auth) {
-        return CreatedDirectoryMapper.INSTANCE
+    public CreatedFile create(@RequestBody @Valid CreateFile file,
+                              Authentication auth) {
+        return CreatedFileMapper.INSTANCE
                 .toPayload(storeService
-                        .create(dir.getName(), auth.getName()));
+                        .store(storeService
+                                .save(file.getName(), auth.getName())));
     }
 
-    @PostMapping("/dir/{dir-id}")
+    @PostMapping(CREATE + "/{dir-id}")
     @ResponseStatus(HttpStatus.OK)
-    public CreatedDirectory create(@RequestParam String name,
-                                   @PathVariable("dir-id") UUID dirId,
-                                   Authentication auth) {
-        return CreatedDirectoryMapper.INSTANCE
+    public CreatedFile create(@RequestBody @Valid CreateFile file,
+                              @PathVariable("dir-id") UUID dirId,
+                              Authentication auth) {
+        return CreatedFileMapper.INSTANCE
                 .toPayload(storeService
-                        .create(name, auth.getName(), dirId));
+                        .store(storeService
+                                .save(file.getName(), auth.getName(), dirId)));
     }
-
 
     @Autowired
-    public void setStoreService(StoreService storeService) {
+    public void setStoreService(StoreFileService storeService) {
         this.storeService = storeService;
     }
 }

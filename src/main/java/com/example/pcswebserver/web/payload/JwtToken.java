@@ -12,10 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtToken {
     String token;
-
     String type;
-
     String algorithm;
-
     String expiresAt;
 }

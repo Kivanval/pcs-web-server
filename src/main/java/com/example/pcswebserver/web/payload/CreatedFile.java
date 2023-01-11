@@ -13,15 +13,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreatedDirectory {
+public class CreatedFile {
     UUID id;
-
     String name;
-
     String creator;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String parent;
-
+    String dir;
     String createdAt;
 }
