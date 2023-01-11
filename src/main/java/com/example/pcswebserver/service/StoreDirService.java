@@ -5,7 +5,7 @@ import com.example.pcswebserver.data.UserRepository;
 import com.example.pcswebserver.domain.StoreDir;
 import com.example.pcswebserver.domain.StorePermissionType;
 import com.example.pcswebserver.domain.User;
-import com.example.pcswebserver.exception.StoreDirNotFoundException;
+import com.example.pcswebserver.exception.DirNotFoundException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class StoreDirService {
         if (dirId != null) {
             var parentDir = dirRepository.findById(dirId);
             if (parentDir.isPresent()) dir.setParent(parentDir.get());
-            else throw new StoreDirNotFoundException("Dir with id %s not found".formatted(dirId));
+            else throw new DirNotFoundException("Dir with id %s not found".formatted(dirId));
         }
         dir = dirRepository.save(dir);
         permissionService.addPermission(dir, creator, StorePermissionType.CREATOR);

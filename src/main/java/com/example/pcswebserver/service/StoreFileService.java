@@ -6,21 +6,25 @@ import com.example.pcswebserver.data.UserRepository;
 import com.example.pcswebserver.domain.StoreFile;
 import com.example.pcswebserver.domain.StorePermissionType;
 import com.example.pcswebserver.domain.User;
+import com.example.pcswebserver.exception.DirNotFoundException;
+import com.example.pcswebserver.exception.FileNotFoundException;
 import com.example.pcswebserver.exception.StorageException;
-import com.example.pcswebserver.exception.StoreDirNotFoundException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -32,6 +36,21 @@ public class StoreFileService {
     StoreDirRepository dirRepository;
     UserRepository userRepository;
     StorePermissionService permissionService;
+
+    @Transactional
+    public Resource load(UUID id) {
+        try {
+            return new UrlResource(Path.of(storePathUrl, id.toString()).toUri());
+        } catch (MalformedURLException e) {
+            throw new StorageException("Could not load file", e);
+        }
+    }
+
+    @Transactional
+    public StoreFile getById(UUID id) {
+        return fileRepository.findById(id)
+                .orElseThrow(() -> new FileNotFoundException("File %s not found".formatted(id)));
+    }
 
     @Transactional
     public StoreFile store(MultipartFile file, StoreFile storeFile) {
@@ -83,7 +102,7 @@ public class StoreFileService {
         if (dirId != null) {
             var dir = dirRepository.findById(dirId);
             if (dir.isPresent()) storeFile.setDir(dir.get());
-            else throw new StoreDirNotFoundException("Dir with id %s not found".formatted(dirId));
+            else throw new DirNotFoundException("Dir %s not found".formatted(dirId));
         }
         storeFile = fileRepository.save(storeFile);
         permissionService.addPermission(storeFile, creator, StorePermissionType.CREATOR);
@@ -93,8 +112,7 @@ public class StoreFileService {
     private Path getTarget(StoreFile storeFile) throws IOException {
         var storePath = Path.of(storePathUrl);
         Files.createDirectories(storePath);
-        return storePath.resolve(storeFile.getId().toString() + "."
-                + FilenameUtils.getExtension(storeFile.getName()));
+        return storePath.resolve(storeFile.getId().toString());
     }
 
     @Autowired

@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static com.example.pcswebserver.domain.StorePermissionType.MODIFY;
@@ -39,9 +40,8 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
                 .getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(auth -> !auth.startsWith("ROLE") || auth.endsWith("ADMIN"))
+                .filter(Predicate.not(auth -> auth.startsWith("ROLE")))
                 .anyMatch(auth -> {
-                    if (auth.endsWith("ADMIN")) return true;
                     if (auth.startsWith(permissionType.toString()) && auth.endsWith(srcUrl)) return true;
                     return StorePermissionType.valueOf(auth.substring(0, auth.indexOf('_')))
                             .getChildren()
