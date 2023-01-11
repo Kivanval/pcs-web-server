@@ -10,9 +10,8 @@ import org.mapstruct.factory.Mappers;
 public interface UploadedFileMapper {
     UploadedFileMapper INSTANCE = Mappers.getMapper(UploadedFileMapper.class);
 
-    @Mapping(target = "creator", source = "file.creator.username")
-    @Mapping(target = "dir", source = "file.directory.name")
+    @Mapping(target = "creator", source = "creator.username")
+    @Mapping(target = "dir", source = "directory.name")
     @Mapping(target = "createdAt", dateFormat = "dd-MM-yyyy HH:mm:ss")
     UploadedFile toPayload(StoreFile file);
-
 }

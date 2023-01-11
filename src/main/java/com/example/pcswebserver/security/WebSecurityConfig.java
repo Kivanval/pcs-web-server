@@ -35,6 +35,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(AUTH_PREFIX + "/**").permitAll()
                 .requestMatchers(STORE_PREFIX + "/**").access(new StoreManager())
+                .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

@@ -3,67 +3,42 @@ package com.example.pcswebserver.web;
 import com.example.pcswebserver.service.StoreService;
 import com.example.pcswebserver.web.payload.UploadedFile;
 import com.example.pcswebserver.web.payload.UploadedFileMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.List;
-
 import static com.example.pcswebserver.web.StoreController.STORE_PREFIX;
 
-@Controller
+@RestController
 @RequestMapping(STORE_PREFIX)
 public class StoreController {
 
     public static final String STORE_PREFIX = "/store";
     private StoreService storeService;
 
-    @PostMapping("/file/{dir}")
+    @PostMapping("/file/{dir-id}")
     @ResponseStatus(HttpStatus.OK)
-    public UploadedFile upload(
+    public UploadedFile uploadFile(
             @RequestParam("file") MultipartFile file,
-            @PathVariable(required = false) @UUID String dir,
+            @PathVariable("dir-id") @UUID String dirId,
             Authentication auth) {
-        return UploadedFileMapper.INSTANCE.toPayload(storeService.upload(file, dir, auth.getName()));
+        return UploadedFileMapper.INSTANCE
+                .toPayload(storeService.uploadFile(file, auth.getName(), dirId));
     }
 
-//    @PostMapping("/uploadMultipleFiles")
-//    public List<UploadedFile> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-//        return null;
-//    }
-//
-//    @GetMapping("/file/{uuid}")
-//    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
-//        // Load file as Resource
-//        Resource resource = storeService.loadFileAsResource(fileName);
-//
-//        // Try to determine file's content type
-//        String contentType = null;
-//        try {
-//            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-//        } catch (IOException ex) {
-//        }
-//
-//        // Fallback to the default content type if type could not be determined
-//        if (contentType == null) {
-//            contentType = "application/octet-stream";
-//        }
-//
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.parseMediaType(contentType))
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-//                .body(resource);
-//    }
+    @PostMapping("/dir/{dir-id}")
+    @ResponseStatus(HttpStatus.OK)
+    public UploadedFile createFolder(
+            @RequestParam("file") MultipartFile file,
+            @PathVariable("dir-id") @UUID String dirId,
+            Authentication auth) {
+        return UploadedFileMapper.INSTANCE
+                .toPayload(storeService.uploadFile(file, auth.getName(), dirId));
+    }
+
 
     @Autowired
     public void setStoreService(StoreService storeService) {

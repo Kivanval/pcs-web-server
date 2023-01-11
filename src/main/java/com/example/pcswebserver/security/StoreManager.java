@@ -21,7 +21,6 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
     public AuthorizationDecision check(Supplier<Authentication> authenticationSupplier, RequestAuthorizationContext context) {
         var authentication = authenticationSupplier.get();
         var requestURI = context.getRequest().getRequestURI();
-        if (requestURI.matches(STORE_PREFIX + "/[^/]+")) return new AuthorizationDecision(true);
         var srcUrl = requestURI.substring(requestURI.lastIndexOf('/') + 1);
         return new AuthorizationDecision(
                 switch (RequestMethod.valueOf(context.getRequest().getMethod())) {
