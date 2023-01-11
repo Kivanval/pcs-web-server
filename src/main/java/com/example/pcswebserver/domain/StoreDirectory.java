@@ -34,12 +34,10 @@ public class StoreDirectory {
     StoreDirectory parent;
     @Column(nullable = false)
     LocalDateTime createdAt = LocalDateTime.now();
-
     @ToString.Exclude
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "directory")
     Set<StoreFile> files = new HashSet<>();
-
     @Setter(AccessLevel.PRIVATE)
     @ToString.Exclude
     @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

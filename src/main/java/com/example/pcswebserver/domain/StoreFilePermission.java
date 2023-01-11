@@ -8,7 +8,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.UUID;
 
 @Entity
 @Table(name = "FILE_PERMS")
@@ -18,9 +17,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StoreFilePermission {
-    @Id
-    @Column(nullable = false)
-    UUID id;
+    @EmbeddedId
+    StoreFilePermissionKey id = new StoreFilePermissionKey();
     @ManyToOne(optional = false)
     @MapsId("userId")
     @JoinColumn(name = "user_id")

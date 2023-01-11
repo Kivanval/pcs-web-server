@@ -32,10 +32,16 @@ public class User {
     @ManyToOne(optional = false)
     @ToString.Exclude
     Role role;
+
     @ToString.Exclude
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
-    Set<StoreDirectory> storageDirectories = new HashSet<>();
+    Set<StoreDirectory> directories = new HashSet<>();
+
+    @ToString.Exclude
+    @Setter(AccessLevel.PRIVATE)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL)
+    Set<StoreFile> files = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,5 @@
 package com.example.pcswebserver.web.payload;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,8 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UploadedFile {
-
+public class CreatedDirectory {
     UUID id;
 
     String name;
@@ -23,11 +21,7 @@ public class UploadedFile {
     String creator;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String dir;
-
-    String contentType;
-
-    Long size;
+    String parent;
 
     String createdAt;
 }

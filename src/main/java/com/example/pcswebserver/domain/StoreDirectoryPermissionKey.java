@@ -20,7 +20,7 @@ public class StoreDirectoryPermissionKey implements Serializable {
     @Column(name = "user_id")
     UUID userId;
     @Column(name = "dir_id")
-    UUID directoryId;
+    UUID dirId;
 
     @Override
     public boolean equals(Object o) {
@@ -28,11 +28,11 @@ public class StoreDirectoryPermissionKey implements Serializable {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         StoreDirectoryPermissionKey that = (StoreDirectoryPermissionKey) o;
         return userId != null && Objects.equals(userId, that.userId)
-                && directoryId != null && Objects.equals(directoryId, that.directoryId);
+                && dirId != null && Objects.equals(dirId, that.dirId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, directoryId);
+        return Objects.hash(userId, dirId);
     }
 }

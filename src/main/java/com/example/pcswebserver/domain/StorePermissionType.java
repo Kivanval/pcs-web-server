@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 public enum StorePermissionType {
-    OWNER {
+    CREATOR {
         @Override
         public Collection<StorePermissionType> getChildren() {
             return Set.of(MODIFY, READ);

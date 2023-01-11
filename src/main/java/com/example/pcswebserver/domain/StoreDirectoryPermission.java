@@ -9,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,16 +20,15 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StoreDirectoryPermission {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
-    UUID id;
+    @EmbeddedId
+    StoreDirectoryPermissionKey id = new StoreDirectoryPermissionKey();
+
     @ManyToOne(optional = false)
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     User user;
     @ManyToOne(optional = false)
-    @MapsId("directoryId")
+    @MapsId("dirId")
     @JoinColumn(name = "directory_id")
     StoreDirectory directory;
     @Enumerated(EnumType.STRING)
