@@ -2,6 +2,8 @@ package com.example.pcswebserver.web;
 
 import com.example.pcswebserver.service.StoreFileService;
 import com.example.pcswebserver.web.payload.*;
+import com.example.pcswebserver.web.payload.mapper.CreatedFileMapper;
+import com.example.pcswebserver.web.payload.mapper.UploadedFileMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +87,12 @@ public class StoreFileController {
                 .toPayload(storeService
                         .store(storeService
                                 .save(file.getName(), auth.getName(), dirId)));
+    }
+
+    @DeleteMapping(DELETE + "/{file-id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("file-id") UUID id) {
+        storeService.delete(id);
     }
 
     @Autowired

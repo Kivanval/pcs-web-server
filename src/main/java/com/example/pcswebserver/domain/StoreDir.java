@@ -43,6 +43,11 @@ public class StoreDir {
     @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<StoreDir> children = new HashSet<>();
 
+    @Setter(AccessLevel.PRIVATE)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "dir", cascade = CascadeType.ALL)
+    Set<StoreDirPermission> dirPermissions = new HashSet<>();
+
     public Set<StoreDir> getAllChildren() {
         return children.isEmpty() ? children : children.stream()
                 .flatMap(dir -> dir.getAllChildren().stream())

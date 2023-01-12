@@ -27,10 +27,8 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
         var srcUrl = requestURI.substring(requestURI.lastIndexOf('/') + 1);
         return new AuthorizationDecision(
                 switch (RequestMethod.valueOf(context.getRequest().getMethod())) {
-                    case GET ->
-                            isAdmin(authentication) || hasAccessToSrc(srcUrl, READ, authentication);
-                    case POST, PUT, PATCH, DELETE ->
-                            isAdmin(authentication) || hasAccessToSrc(srcUrl, MODIFY, authentication);
+                    case GET -> isAdmin(authentication) || hasAccessToSrc(srcUrl, READ, authentication);
+                    case POST, PUT, PATCH, DELETE -> isAdmin(authentication) || hasAccessToSrc(srcUrl, MODIFY, authentication);
                     default -> false;
                 });
     }
@@ -41,13 +39,13 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(Predicate.not(auth -> auth.startsWith("ROLE")))
+                .filter(auth -> auth.endsWith(srcUrl))
                 .anyMatch(auth -> {
-                    if (auth.startsWith(permissionType.toString()) && auth.endsWith(srcUrl)) return true;
+                    if (auth.startsWith(permissionType.toString())) return true;
                     return StorePermissionType.valueOf(auth.substring(0, auth.indexOf('_')))
                             .getChildren()
                             .stream()
-                            .anyMatch(authPermissionType -> authPermissionType == permissionType
-                                    && auth.endsWith(srcUrl));
+                            .anyMatch(authPermissionType -> authPermissionType == permissionType);
                 });
     }
 

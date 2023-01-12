@@ -1,6 +1,7 @@
-package com.example.pcswebserver.web.payload;
+package com.example.pcswebserver.web.payload.mapper;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.pcswebserver.web.payload.JwtToken;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

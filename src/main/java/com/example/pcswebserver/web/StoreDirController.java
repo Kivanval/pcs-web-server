@@ -3,7 +3,9 @@ package com.example.pcswebserver.web;
 import com.example.pcswebserver.service.StoreDirService;
 import com.example.pcswebserver.web.payload.CreateDir;
 import com.example.pcswebserver.web.payload.CreatedDir;
-import com.example.pcswebserver.web.payload.CreatedDirMapper;
+import com.example.pcswebserver.web.payload.OpenedDir;
+import com.example.pcswebserver.web.payload.mapper.CreatedDirMapper;
+import com.example.pcswebserver.web.payload.mapper.OpenedDirMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,27 @@ import static com.example.pcswebserver.web.WebConstants.*;
 public class StoreDirController {
     private StoreDirService storeService;
 
+    @GetMapping(OPEN)
+    @ResponseStatus(HttpStatus.OK)
+    public OpenedDir open(Authentication auth) {
+        return OpenedDirMapper.INSTANCE
+                .toPayload(
+                        storeService.getDirs(auth.getName()),
+                        storeService.getFiles(auth.getName())
+                );
+    }
+
+    @GetMapping(OPEN + "/{dir-id}")
+    @ResponseStatus(HttpStatus.OK)
+    public OpenedDir open(@PathVariable("dir-id") UUID dirId,
+                          Authentication auth) {
+        return OpenedDirMapper.INSTANCE
+                .toPayload(
+                        storeService.getDirs(auth.getName(), dirId),
+                        storeService.getFiles(auth.getName(), dirId)
+                );
+    }
+
     @PostMapping(CREATE)
     @ResponseStatus(HttpStatus.OK)
     public CreatedDir create(@RequestBody CreateDir dir,
@@ -29,12 +52,12 @@ public class StoreDirController {
 
     @PostMapping(CREATE + "/{dir-id}")
     @ResponseStatus(HttpStatus.OK)
-    public CreatedDir create(@RequestParam String name,
+    public CreatedDir create(@RequestBody CreateDir dir,
                              @PathVariable("dir-id") UUID dirId,
                              Authentication auth) {
         return CreatedDirMapper.INSTANCE
                 .toPayload(storeService
-                        .create(name, auth.getName(), dirId));
+                        .create(dir.getName(), auth.getName(), dirId));
     }
 
     @Autowired

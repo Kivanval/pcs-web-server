@@ -6,7 +6,9 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.Hibernate;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -39,6 +41,11 @@ public class StoreFile {
 
     @Column(nullable = false)
     LocalDateTime createdAt = LocalDateTime.now();
+
+    @Setter(AccessLevel.PRIVATE)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL)
+    Set<StoreFilePermission> filePermissions = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

@@ -1,8 +1,10 @@
 package com.example.pcswebserver.service;
 
 import com.example.pcswebserver.data.StoreDirRepository;
+import com.example.pcswebserver.data.StoreFileRepository;
 import com.example.pcswebserver.data.UserRepository;
 import com.example.pcswebserver.domain.StoreDir;
+import com.example.pcswebserver.domain.StoreFile;
 import com.example.pcswebserver.domain.StorePermissionType;
 import com.example.pcswebserver.domain.User;
 import com.example.pcswebserver.exception.DirNotFoundException;
@@ -12,11 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StoreDirService {
+
+    StoreFileRepository fileRepository;
     StoreDirRepository dirRepository;
     UserRepository userRepository;
     StorePermissionService permissionService;
@@ -40,6 +45,31 @@ public class StoreDirService {
     @Transactional
     public StoreDir create(String name, String username) {
         return create(name, username, null);
+    }
+
+    @Transactional
+    public Set<StoreFile> getFiles(String username) {
+        return fileRepository.findAllByCreatorUsernameAndDirIsNull(username);
+    }
+
+    @Transactional
+    public Set<StoreDir> getDirs(String username) {
+        return dirRepository.findAllByCreatorUsernameAndParentIsNull(username);
+    }
+
+    @Transactional
+    public Set<StoreFile> getFiles(String username, UUID dirId) {
+        return fileRepository.findAllByCreatorUsernameAndDirId(username, dirId);
+    }
+
+    @Transactional
+    public Set<StoreDir> getDirs(String username, UUID parentId) {
+        return dirRepository.findAllByCreatorUsernameAndParentId(username, parentId);
+    }
+
+    @Autowired
+    public void setFileRepository(StoreFileRepository fileRepository) {
+        this.fileRepository = fileRepository;
     }
 
     @Autowired

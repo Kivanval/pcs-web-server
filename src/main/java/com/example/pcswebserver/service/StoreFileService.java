@@ -24,7 +24,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -70,6 +69,16 @@ public class StoreFileService {
         } catch (IOException ex) {
             throw new StorageException("Could not store file " + storeFile.getName(), ex);
         }
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        try {
+            Files.delete(Path.of(storePathUrl, id.toString()));
+        } catch (IOException ex) {
+            throw new StorageException("Could not store file " + id, ex);
+        }
+        fileRepository.deleteById(id);
     }
 
     @Transactional

@@ -4,7 +4,7 @@ package com.example.pcswebserver.web;
 import com.example.pcswebserver.service.UserService;
 import com.example.pcswebserver.web.payload.Credentials;
 import com.example.pcswebserver.web.payload.JwtToken;
-import com.example.pcswebserver.web.payload.JwtTokenMapper;
+import com.example.pcswebserver.web.payload.mapper.JwtTokenMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
