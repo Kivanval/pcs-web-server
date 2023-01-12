@@ -36,7 +36,7 @@ public class StoreDir {
     LocalDateTime createdAt = LocalDateTime.now();
     @ToString.Exclude
     @Setter(AccessLevel.PRIVATE)
-    @OneToMany(mappedBy = "dir")
+    @OneToMany(mappedBy = "dir", cascade = CascadeType.ALL)
     Set<StoreFile> files = new HashSet<>();
     @Setter(AccessLevel.PRIVATE)
     @ToString.Exclude

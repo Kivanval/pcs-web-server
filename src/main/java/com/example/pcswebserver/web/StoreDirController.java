@@ -60,6 +60,12 @@ public class StoreDirController {
                         .create(dir.getName(), auth.getName(), dirId));
     }
 
+    @DeleteMapping(DELETE + "/{dir-id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("dir-id") UUID dirId) {
+        storeService.delete(dirId);
+    }
+
     @Autowired
     public void setStoreService(StoreDirService storeService) {
         this.storeService = storeService;

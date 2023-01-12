@@ -1,7 +1,10 @@
 package com.example.pcswebserver.web;
 
 import com.example.pcswebserver.service.StoreFileService;
-import com.example.pcswebserver.web.payload.*;
+import com.example.pcswebserver.service.impl.StoreFileServiceImpl;
+import com.example.pcswebserver.web.payload.CreateFile;
+import com.example.pcswebserver.web.payload.CreatedFile;
+import com.example.pcswebserver.web.payload.UploadedFile;
 import com.example.pcswebserver.web.payload.mapper.CreatedFileMapper;
 import com.example.pcswebserver.web.payload.mapper.UploadedFileMapper;
 import jakarta.validation.Valid;
@@ -34,12 +37,14 @@ public class StoreFileController {
         var file = storeService.getById(id);
         var resource = storeService.load(id);
 
-        String contentType = "application/octet-stream";
+        String contentType = null;
         try {
             contentType = Files.probeContentType(Path.of(file.getName()));
         } catch (IOException ex) {
             log.info("Could not determine file type by id {}", id);
         }
+        if (contentType == null)
+            contentType = "application/octet-stream";
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
@@ -53,8 +58,7 @@ public class StoreFileController {
                                Authentication auth) {
         return UploadedFileMapper.INSTANCE
                 .toPayload(storeService
-                        .store(file, storeService
-                                .save(file, auth.getName())));
+                        .upload(file, auth.getName()));
     }
 
     @PostMapping(UPLOAD + "/{dir-id}")
@@ -64,8 +68,7 @@ public class StoreFileController {
                                Authentication auth) {
         return UploadedFileMapper.INSTANCE
                 .toPayload(storeService
-                        .store(file, storeService
-                                .save(file, auth.getName(), dirId)));
+                        .upload(file, auth.getName(), dirId));
     }
 
     @PostMapping(CREATE)
@@ -74,8 +77,7 @@ public class StoreFileController {
                               Authentication auth) {
         return CreatedFileMapper.INSTANCE
                 .toPayload(storeService
-                        .store(storeService
-                                .save(file.getName(), auth.getName())));
+                        .create(file.getName(), auth.getName()));
     }
 
     @PostMapping(CREATE + "/{dir-id}")
@@ -85,8 +87,7 @@ public class StoreFileController {
                               Authentication auth) {
         return CreatedFileMapper.INSTANCE
                 .toPayload(storeService
-                        .store(storeService
-                                .save(file.getName(), auth.getName(), dirId)));
+                        .create(file.getName(), auth.getName(), dirId));
     }
 
     @DeleteMapping(DELETE + "/{file-id}")
@@ -96,7 +97,7 @@ public class StoreFileController {
     }
 
     @Autowired
-    public void setStoreService(StoreFileService storeService) {
+    public void setStoreService(StoreFileServiceImpl storeService) {
         this.storeService = storeService;
     }
 }
