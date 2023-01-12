@@ -33,14 +33,7 @@ public class StoreFilePermission {
     LocalDateTime grantedAt = LocalDateTime.now();
 
     public SimpleGrantedAuthority asAuthority() {
-        var len = permissionType.toString().length();
-        var stringBuilder = new StringBuilder(permissionType.toString() + "_" + file.getId());
-        var dir = file.getDir();
-        while (dir != null) {
-            stringBuilder.insert(len, "_" + dir.getId());
-            dir = dir.getParent();
-        }
-        return new SimpleGrantedAuthority(stringBuilder.toString());
+        return new SimpleGrantedAuthority(permissionType.toString() + "_" + file.getId());
     }
 
     @Override

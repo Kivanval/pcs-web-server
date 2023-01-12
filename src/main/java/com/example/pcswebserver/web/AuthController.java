@@ -1,7 +1,7 @@
 package com.example.pcswebserver.web;
 
 
-import com.example.pcswebserver.service.UserService;
+import com.example.pcswebserver.service.impl.UserServiceImpl;
 import com.example.pcswebserver.web.payload.Credentials;
 import com.example.pcswebserver.web.payload.JwtToken;
 import com.example.pcswebserver.web.payload.mapper.JwtTokenMapper;
@@ -16,7 +16,7 @@ import static com.example.pcswebserver.web.WebConstants.*;
 @RestController
 @RequestMapping(AUTH)
 public class AuthController {
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @PostMapping(SIGN_UP)
     @ResponseStatus(HttpStatus.OK)
@@ -33,7 +33,7 @@ public class AuthController {
     }
 
     @Autowired
-    public void setUserService(UserService userService) {
+    public void setUserService(UserServiceImpl userService) {
         this.userService = userService;
     }
 }
