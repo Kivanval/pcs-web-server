@@ -28,17 +28,16 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
         var requestURI = context.getRequest().getRequestURI();
 
         if (requestURI.matches(STORE + "/[^/]+/[^/]+")) return new AuthorizationDecision(true);
-
+        var srcUrl = requestURI.substring(requestURI.lastIndexOf('/') + 1);
         return new AuthorizationDecision(
                 switch (RequestMethod.valueOf(context.getRequest().getMethod())) {
-                    case GET -> hasAccess(requestURI, READ, authentication);
-                    case POST, PUT, PATCH, DELETE -> hasAccess(requestURI, MODIFY, authentication);
+                    case GET -> hasAccess(srcUrl, READ, authentication);
+                    case POST, PUT, PATCH, DELETE -> hasAccess(srcUrl, MODIFY, authentication);
                     default -> false;
                 });
     }
 
-    private boolean hasAccess(String requestURI, StorePermissionType permissionType, Authentication authentication) {
-        var srcUrl = requestURI.substring(requestURI.lastIndexOf('/') + 1);
+    private boolean hasAccess(String srcUrl, StorePermissionType permissionType, Authentication authentication) {
         return isAdmin(authentication) || hasAccessToSrc(srcUrl, permissionType, authentication);
     }
 
@@ -56,19 +55,21 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(Predicate.not(auth -> auth.startsWith("ROLE")))
-                .filter(auth -> auth.endsWith(srcUrl))
                 .anyMatch(auth -> {
                     var splitted = auth.split("_");
-                    if (splitted[0].equals(permissionType.toString())) return true;
-                    return hasParentAccess(permissionType, splitted[1]) || (splitted.length == 3
-                            && hasParentAccess(permissionType, splitted[2]));
+                    var authPermissionType = StorePermissionType.valueOf(splitted[0]);
+                    if (authPermissionType == permissionType) return true;
+                    return hasParentAccess(splitted[1], authPermissionType, srcUrl, permissionType)
+                            || (splitted.length == 3
+                            && hasParentAccess(splitted[2], authPermissionType, srcUrl, permissionType));
                 });
     }
 
-    private boolean hasParentAccess(StorePermissionType permissionType, String srcUrl) {
-        return StorePermissionType.valueOf(srcUrl)
+    private boolean hasParentAccess(String authSrcUrl, StorePermissionType authPermissionType, String srcUrl, StorePermissionType permissionType) {
+        return authPermissionType
                 .getChildren()
                 .stream()
-                .anyMatch(authPermissionType -> authPermissionType == permissionType);
+                .anyMatch(childPermissionType -> childPermissionType == permissionType
+                        && authSrcUrl.equals(srcUrl));
     }
 }

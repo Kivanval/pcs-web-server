@@ -39,7 +39,7 @@ public class StoreDirPermission {
     public Set<SimpleGrantedAuthority> asAuthorities() {
         return Stream
                 .concat(Stream.of(dir), dir.getAllChildren().stream())
-                .map(storeDir -> permissionType.toString() + "_" + storeDir.getId())
+                .map(storeDir -> String.join("_", permissionType.toString(), storeDir.getId().toString()))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
     }
