@@ -20,6 +20,8 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authenticationSupplier, RequestAuthorizationContext context) {
         var authentication = authenticationSupplier.get();
+        if (authentication == null) return new AuthorizationDecision(false);
+
         var requestURI = context.getRequest().getRequestURI();
 
         if (requestURI.matches(STORE + "/[^/]+/[^/]+")) return new AuthorizationDecision(true);
@@ -28,7 +30,8 @@ public class StoreManager implements AuthorizationManager<RequestAuthorizationCo
         return new AuthorizationDecision(
                 switch (RequestMethod.valueOf(context.getRequest().getMethod())) {
                     case GET -> isAdmin(authentication) || hasAccessToSrc(srcUrl, READ, authentication);
-                    case POST, PUT, PATCH, DELETE -> isAdmin(authentication) || hasAccessToSrc(srcUrl, MODIFY, authentication);
+                    case POST, PUT, PATCH, DELETE ->
+                            isAdmin(authentication) || hasAccessToSrc(srcUrl, MODIFY, authentication);
                     default -> false;
                 });
     }
