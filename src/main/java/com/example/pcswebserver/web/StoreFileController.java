@@ -7,6 +7,7 @@ import com.example.pcswebserver.web.payload.CreatedFile;
 import com.example.pcswebserver.web.payload.UploadedFile;
 import com.example.pcswebserver.web.payload.mapper.CreatedFileMapper;
 import com.example.pcswebserver.web.payload.mapper.UploadedFileMapper;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import static com.example.pcswebserver.web.WebConstants.*;
 @RestController
 @RequestMapping(STORE + FILE)
 @Slf4j
+@SecurityRequirement(name = "pcs-api")
 public class StoreFileController {
     private StoreFileService storeService;
 

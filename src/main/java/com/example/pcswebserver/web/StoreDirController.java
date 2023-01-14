@@ -6,6 +6,7 @@ import com.example.pcswebserver.web.payload.CreatedDir;
 import com.example.pcswebserver.web.payload.OpenedDir;
 import com.example.pcswebserver.web.payload.mapper.CreatedDirMapper;
 import com.example.pcswebserver.web.payload.mapper.OpenedDirMapper;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import static com.example.pcswebserver.web.WebConstants.*;
 
 @RestController
 @RequestMapping(STORE + DIR)
+@SecurityRequirement(name = "pcs-api")
 public class StoreDirController {
     private StoreDirService storeService;
 

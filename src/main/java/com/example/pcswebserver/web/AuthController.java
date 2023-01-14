@@ -30,7 +30,7 @@ public class AuthController {
     public JwtToken signIn(@RequestBody @Valid Credentials credentials) {
         return userService.signIn(credentials.getUsername(), credentials.getPassword())
                 .map(JwtTokenMapper.INSTANCE::toPayload)
-                .orElseThrow(() -> new AccessDeniedException("Access denied"));
+                .orElseThrow(() -> new AccessDeniedException("Invalid username and/or password"));
     }
 
     @Autowired
